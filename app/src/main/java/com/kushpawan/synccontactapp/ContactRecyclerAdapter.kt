@@ -49,7 +49,7 @@ class ContactRecyclerAdapter(private var genresList: ArrayList<ContactData>) :
 
             name.text = item.name
             email.text = item.email
-            number.text = item.number
+            number.text = item.mobileNumber
 
         }
     }

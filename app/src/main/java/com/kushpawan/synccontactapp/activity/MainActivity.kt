@@ -101,6 +101,8 @@ class MainActivity : BaseActivity() {
                 arrayOf(Manifest.permission.READ_CONTACTS),
                 RECORD_REQUEST_CODE
             )
+        } else {
+            initWorkMangerForContacts()
         }
     }
 

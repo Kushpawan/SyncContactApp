@@ -2,13 +2,20 @@ package com.kushpawan.synccontactapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.example.testassignment.NewsApp.model.AppDatabase
+import com.kushpawan.synccontactapp.database.ContactWorkerClass
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var workManager: WorkManager
 
     lateinit var contactRecyclerAdapter: ContactRecyclerAdapter
     private var contactList: ArrayList<ContactData>? = null
@@ -20,10 +27,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         db = AppDatabase(this)
 
-        setupRecyclerView()
-        add_button.setOnClickListener {
-            addNewContact()
-        }
+        val refreshWork = OneTimeWorkRequest.Builder(ContactWorkerClass::class.java)
+            .build()
+        workManager = WorkManager.getInstance()
+        workManager.enqueue(refreshWork)
+
+        getContact()
+
     }
 
     private fun setupRecyclerView() {
@@ -35,6 +45,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun addNewContact() {
 
+    }
+
+    private fun getContact() {
+        db.todoDao().getAllContacts().observe(this@MainActivity, Observer {
+            contactList = it as ArrayList<ContactData>?
+            setupRecyclerView()
+        })
     }
 
     private fun saveContact(contactData: ContactData) {

@@ -1,4 +1,4 @@
-package com.kushpawan.synccontactapp
+package com.kushpawan.synccontactapp.database
 
 import android.os.Parcelable
 import androidx.room.Entity

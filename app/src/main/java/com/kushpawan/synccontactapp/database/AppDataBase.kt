@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.kushpawan.synccontactapp.ContactData
+import com.kushpawan.synccontactapp.database.ContactData
 
 @Database(entities = [ContactData::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {

@@ -1,9 +1,8 @@
-package com.kushpawan.synccontactapp.database
+package com.kushpawan.synccontactapp.sync
 
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.kushpawan.synccontactapp.ContactClass
 
 class ContactWorkerClass(
     context: Context,
@@ -12,7 +11,7 @@ class ContactWorkerClass(
 
     override fun doWork(): Result {
         // perform long running operation
-        ContactClass().getContacts(applicationContext)
+        ContactSyncClass().getContacts(applicationContext)
 
         return Result.success()
     }

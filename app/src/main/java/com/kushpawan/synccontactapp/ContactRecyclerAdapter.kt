@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.kushpawan.synccontactapp.database.ContactData
 
 class ContactRecyclerAdapter(private var genresList: ArrayList<ContactData>) :
     RecyclerView.Adapter<ContactRecyclerAdapter.ViewHolder>() {

@@ -1,19 +1,20 @@
-package com.kushpawan.synccontactapp
+package com.kushpawan.synccontactapp.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.testassignment.NewsApp.model.AppDatabase
-import com.kushpawan.synccontactapp.database.ContactWorkerClass
+import com.kushpawan.synccontactapp.database.ContactData
+import com.kushpawan.synccontactapp.ContactRecyclerAdapter
+import com.kushpawan.synccontactapp.R
+import com.kushpawan.synccontactapp.sync.ContactWorkerClass
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var workManager: WorkManager
 
@@ -27,37 +28,42 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         db = AppDatabase(this)
 
-        val refreshWork = OneTimeWorkRequest.Builder(ContactWorkerClass::class.java)
-            .build()
-        workManager = WorkManager.getInstance()
-        workManager.enqueue(refreshWork)
-
-        getContact()
+        initWorkMangerForContacts()
 
     }
 
+    private fun initWorkMangerForContacts() {
+        showProgressDialog("Syncing Contacts..")
+        val refreshWork = OneTimeWorkRequestBuilder<ContactWorkerClass>()
+            .build()
+        workManager = WorkManager.getInstance()
+        workManager.enqueue(refreshWork)
+        WorkManager.getInstance().getWorkInfoByIdLiveData(refreshWork.id)
+            .observe(this, Observer { workInfo ->
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    getAllContact()
+                    hideProgressDialog()
+                }
+            })
+    }
+
     private fun setupRecyclerView() {
-        contactRecyclerAdapter = contactList?.let { ContactRecyclerAdapter(it) }!!
+        contactRecyclerAdapter = contactList?.let {
+            ContactRecyclerAdapter(
+                it
+            )
+        }!!
         contact_recycler.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         contact_recycler.adapter = contactRecyclerAdapter
     }
 
-    private fun addNewContact() {
-
-    }
-
-    private fun getContact() {
+    private fun getAllContact() {
         db.todoDao().getAllContacts().observe(this@MainActivity, Observer {
             contactList = it as ArrayList<ContactData>?
             setupRecyclerView()
-        })
-    }
 
-    private fun saveContact(contactData: ContactData) {
-        GlobalScope.launch {
-            db.todoDao().insertContact(contactData)
-        }
+        })
     }
 
 }

@@ -13,17 +13,10 @@ import java.util.*
 open class ContactSyncClass {
     private lateinit var db: AppDatabase
 
-    var PROJECTION = arrayOf(
-        ContactsContract.RawContacts._ID,
-        ContactsContract.Contacts.DISPLAY_NAME,
-        ContactsContract.CommonDataKinds.Email.DATA
-    )
-
     fun getContacts(ctx: Context) {
         db = AppDatabase(ctx)
 
         try {
-
             val list: MutableList<ContactData> = ArrayList()
             val contentResolver = ctx.contentResolver
             val cursor = contentResolver.query(
@@ -92,6 +85,7 @@ open class ContactSyncClass {
         }
     }
 
+    //check for valid mobile number
     private fun isValidNumber(phoneNumber: String?): Boolean {
         return if (phoneNumber.toString().length <= 10) {
             false
@@ -100,6 +94,7 @@ open class ContactSyncClass {
         }
     }
 
+    // save synced list to local db using Room & Coroutine Scope
     private fun saveList(list: MutableList<ContactData>) {
         GlobalScope.launch {
             db.todoDao().clearAndCacheContact(list)

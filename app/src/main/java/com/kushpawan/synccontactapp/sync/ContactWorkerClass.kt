@@ -10,9 +10,8 @@ class ContactWorkerClass(
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        // perform long running operation
+        // perform the contact sync service in background
         ContactSyncClass().getContacts(applicationContext)
-
         return Result.success()
     }
 

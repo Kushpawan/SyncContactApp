@@ -13,8 +13,6 @@ interface ToDoDao {
     @Insert
     fun insertContacts(articles: List<ContactData>): List<Long>
 
-    @Insert
-    fun insertContact(articles: ContactData): Long
 
     @Query("DELETE FROM contact_data")
     fun clearAllContact()
